@@ -25,7 +25,10 @@ public class ETLController {
     private Job job;
 
     @GetMapping
-    public ResponseEntity<BatchStatusDTO> startTheJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+    public ResponseEntity<BatchStatusDTO> startTheJobLauncher()
+            throws JobInstanceAlreadyCompleteException,
+            JobExecutionAlreadyRunningException,
+            JobParametersInvalidException, JobRestartException {
         Map<String, JobParameter> maps = new HashMap<>();
         maps.put("Time-Stamp", new JobParameter(System.currentTimeMillis()));
         JobParameters jobParameters = new JobParameters(maps);
@@ -36,13 +39,13 @@ public class ETLController {
         long durationTime = ((endTime.getTime() - startTime.getTime())/1000) % 60;
 
 
-        BatchStatusDTO jobStatus = new BatchStatusDTO(execution.getJobId(),
+        BatchStatusDTO userJobStatus = new BatchStatusDTO(execution.getJobId(),
                                     job.getName(),
                                     execution.getStartTime(),
                                     execution.getEndTime(),
                                     String.valueOf(durationTime)+"s",
                                     execution.getStatus().toString());
 
-        return ResponseEntity.ok(jobStatus);
+        return ResponseEntity.ok(userJobStatus);
     }
 }

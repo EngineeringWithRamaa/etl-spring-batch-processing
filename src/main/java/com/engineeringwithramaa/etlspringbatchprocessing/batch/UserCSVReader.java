@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class CSVReader {
+public class UserCSVReader {
     @Bean
     public FlatFileItemReader<User> reader(@Value("${input1}") Resource resource) throws IOException {
         FlatFileItemReader<User> flatFileItemReader = new FlatFileItemReader<>();

@@ -1,6 +1,6 @@
 package com.engineeringwithramaa.etlspringbatchprocessing.config;
 
-import com.engineeringwithramaa.etlspringbatchprocessing.batch.CSVReader;
+import com.engineeringwithramaa.etlspringbatchprocessing.batch.UserCSVReader;
 import com.engineeringwithramaa.etlspringbatchprocessing.entity.User;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -20,14 +20,14 @@ import org.springframework.context.annotation.Configuration;
 public class SpringBatchConfig {
 
     @Autowired
-    private CSVReader reader;
+    private UserCSVReader reader;
 
     @Bean
-    public Job job(JobBuilderFactory jobBuilderFactory,
-                   StepBuilderFactory stepBuilderFactory,
-                   ItemReader<User> reader,
-                   ItemProcessor<User, User> processor,
-                   ItemWriter<User> writer) {
+    public Job userTableTransformationJob(JobBuilderFactory jobBuilderFactory,
+                                          StepBuilderFactory stepBuilderFactory,
+                                          ItemReader<User> reader,
+                                          ItemProcessor<User, User> processor,
+                                          ItemWriter<User> writer) {
 
         Step step = stepBuilderFactory.get("etl-batch-step")
                 .<User, User>chunk(100)

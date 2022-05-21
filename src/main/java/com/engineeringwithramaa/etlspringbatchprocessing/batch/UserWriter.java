@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class Writer implements ItemWriter<User> {
+public class UserWriter implements ItemWriter<User> {
     @Autowired
     private UserDAO userDAO;
 

@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class Processor implements ItemProcessor<User, User> {
+public class UserProcessor implements ItemProcessor<User, User> {
     private static Map<String, String> DEPT_NAMES = new HashMap<>();
 
-    public Processor() {
+    public UserProcessor() {
         DEPT_NAMES.put("ADMIN_ASST","Administrative Assistant");
         DEPT_NAMES.put("EXEC_ASST","Executive Assistant");
         DEPT_NAMES.put("MKT_MGR","Marketing Manager");
