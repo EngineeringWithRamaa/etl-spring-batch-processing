@@ -41,7 +41,7 @@ public class Processor implements ItemProcessor<User, User> {
     public User process(User user) throws Exception {
         String departmentName = user.getDepartment();
         user.setDepartment(DEPT_NAMES.get(departmentName));
-        System.out.println("Processor Logging - Department Name transformed from " + departmentName + " to "+ user.getDepartment());
+        //System.out.println("Processor Logging - Department Name transformed from " + departmentName + " to "+ user.getDepartment());
         return user;
     }
 }

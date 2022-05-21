@@ -16,6 +16,6 @@ public class Writer implements ItemWriter<User> {
     @Override
     public void write(List<? extends User> users) throws Exception {
         userDAO.saveAll(users);
-        System.out.println("Writer Logging - User Data loaded into H2 db " + users);
+        //System.out.println("Writer Logging - User Data dumped into MySQL " + users);
     }
 }
