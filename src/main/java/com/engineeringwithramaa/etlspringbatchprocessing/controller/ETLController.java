@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/start-batch")
+@RequestMapping("/api/v1/start-batch")
 public class ETLController {
     @Autowired
     private JobLauncher jobLauncher;

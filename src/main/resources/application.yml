@@ -15,4 +15,4 @@ spring:
     properties:
       dialect: org.hibernate.dialect.MySQL5Dialect
 input1: file:/I:/2022/IntelliJ Workspace/etl-spring-batch-processing/src/main/resources/users.csv
-input2: file:/I:/2022/IntelliJ Workspace/etl-spring-batch-processing/src/main/resources/electronic-card-transactions.csv
+input2: file:/I:/2022/IntelliJ Workspace/etl-spring-batch-processing/src/main/resources/electronic-card-transactions-table.csv

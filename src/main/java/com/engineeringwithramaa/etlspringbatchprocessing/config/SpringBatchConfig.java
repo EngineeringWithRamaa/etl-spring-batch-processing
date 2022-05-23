@@ -1,6 +1,7 @@
 package com.engineeringwithramaa.etlspringbatchprocessing.config;
 
 import com.engineeringwithramaa.etlspringbatchprocessing.batch.UserCSVReader;
+import com.engineeringwithramaa.etlspringbatchprocessing.entity.ECT;
 import com.engineeringwithramaa.etlspringbatchprocessing.entity.User;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -27,20 +28,31 @@ public class SpringBatchConfig {
                                           StepBuilderFactory stepBuilderFactory,
                                           ItemReader<User> reader,
                                           ItemProcessor<User, User> processor,
-                                          ItemWriter<User> writer) {
+                                          ItemWriter<User> writer,
+                                          ItemReader<ECT> ECTReader,
+                                          ItemProcessor<ECT, ECT> ECTProcessor,
+                                          ItemWriter<ECT> ECTWriter) {
 
-        Step step = stepBuilderFactory.get("etl-batch-step")
+        Step userStep = stepBuilderFactory.get("etl-user-step")
                 .<User, User>chunk(100)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .build();
 
-        return jobBuilderFactory.get("etl-batch-job")
-                .incrementer(new RunIdIncrementer())
-                .start(step)
+        Step ECTStep = stepBuilderFactory.get("etl-electronic-card-transaction-step")
+                .<ECT, ECT>chunk(200)
+                .reader(ECTReader)
+                .processor(ECTProcessor)
+                .writer(ECTWriter)
                 .build();
 
+
+        return jobBuilderFactory.get("etl-batch-job")
+                .incrementer(new RunIdIncrementer())
+                .start(userStep)
+                .next(ECTStep)
+                .build();
 
     }
 

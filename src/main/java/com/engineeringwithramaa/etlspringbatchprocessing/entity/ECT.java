@@ -1,72 +1,78 @@
 package com.engineeringwithramaa.etlspringbatchprocessing.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "ect")
+@Table(name = "card_transactions")
 public class ECT {
     @Id
-    private String referenceId;
-    private String transactionDate;
-    private String transactionSatus;
-    private String transactionUnits;
+    private int transactionId;
+    private String reference;
+    private String period;
+    private String transactionStatus;
+    private String units;
     private int magnitude;
-    private String transactionSubject;
+    private String subject;
     private String transactionGroup;
-    private String title1;
-    private String title2;
+    private String seriesTitle1;
+    private String seriesTitle2;
 
-    public ECT(String referenceId) {
-        this.referenceId = referenceId;
+    public ECT() {
     }
 
-    public ECT(String referenceId, String transactionDate,
-               String transactionSatus, String transactionUnits,
-               int magnitude, String transactionSubject,
-               String transactionGroup, String title1, String title2) {
-        this.referenceId = referenceId;
-        this.transactionDate = transactionDate;
-        this.transactionSatus = transactionSatus;
-        this.transactionUnits = transactionUnits;
+    public ECT(int transactionId, String reference, String period,
+               String transactionStatus, String units, int magnitude,
+               String subject, String transactionGroup, String seriesTitle1, String seriesTitle2) {
+        this.transactionId = transactionId;
+        this.reference = reference;
+        this.period = period;
+        this.transactionStatus = transactionStatus;
+        this.units = units;
         this.magnitude = magnitude;
-        this.transactionSubject = transactionSubject;
+        this.subject = subject;
         this.transactionGroup = transactionGroup;
-        this.title1 = title1;
-        this.title2 = title2;
+        this.seriesTitle1 = seriesTitle1;
+        this.seriesTitle2 = seriesTitle2;
     }
 
-    public String getReferenceId() {
-        return referenceId;
+    public int getTransactionId() {
+        return transactionId;
     }
 
-    public void setReferenceId(String referenceId) {
-        this.referenceId = referenceId;
+    public void setTransactionId(int transactionId) {
+        this.transactionId = transactionId;
     }
 
-    public String getTransactionDate() {
-        return transactionDate;
+    public String getReference() {
+        return reference;
     }
 
-    public void setTransactionDate(String transactionDate) {
-        this.transactionDate = transactionDate;
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
-    public String getTransactionSatus() {
-        return transactionSatus;
+    public String getPeriod() {
+        return period;
     }
 
-    public void setTransactionSatus(String transactionSatus) {
-        this.transactionSatus = transactionSatus;
+    public void setPeriod(String period) {
+        this.period = period;
     }
 
-    public String getTransactionUnits() {
-        return transactionUnits;
+    public String getTransactionStatus() {
+        return transactionStatus;
     }
 
-    public void setTransactionUnits(String transactionUnits) {
-        this.transactionUnits = transactionUnits;
+    public void setTransactionStatus(String transactionStatus) {
+        this.transactionStatus = transactionStatus;
+    }
+
+    public String getUnits() {
+        return units;
+    }
+
+    public void setUnits(String units) {
+        this.units = units;
     }
 
     public int getMagnitude() {
@@ -77,12 +83,12 @@ public class ECT {
         this.magnitude = magnitude;
     }
 
-    public String getTransactionSubject() {
-        return transactionSubject;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setTransactionSubject(String transactionSubject) {
-        this.transactionSubject = transactionSubject;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     public String getTransactionGroup() {
@@ -93,34 +99,35 @@ public class ECT {
         this.transactionGroup = transactionGroup;
     }
 
-    public String getTitle1() {
-        return title1;
+    public String getSeriesTitle1() {
+        return seriesTitle1;
     }
 
-    public void setTitle1(String title1) {
-        this.title1 = title1;
+    public void setSeriesTitle1(String seriesTitle1) {
+        this.seriesTitle1 = seriesTitle1;
     }
 
-    public String getTitle2() {
-        return title2;
+    public String getSeriesTitle2() {
+        return seriesTitle2;
     }
 
-    public void setTitle2(String title2) {
-        this.title2 = title2;
+    public void setSeriesTitle2(String seriesTitle2) {
+        this.seriesTitle2 = seriesTitle2;
     }
 
     @Override
     public String toString() {
         return "ECT{" +
-                "referenceId='" + referenceId + '\'' +
-                ", transactionDate='" + transactionDate + '\'' +
-                ", transactionSatus='" + transactionSatus + '\'' +
-                ", transactionUnits='" + transactionUnits + '\'' +
+                "transactionId=" + transactionId +
+                ", reference='" + reference + '\'' +
+                ", period='" + period + '\'' +
+                ", transactionStatus='" + transactionStatus + '\'' +
+                ", units='" + units + '\'' +
                 ", magnitude=" + magnitude +
-                ", transactionSubject='" + transactionSubject + '\'' +
+                ", subject='" + subject + '\'' +
                 ", transactionGroup='" + transactionGroup + '\'' +
-                ", title1='" + title1 + '\'' +
-                ", title2='" + title2 + '\'' +
+                ", seriesTitle1='" + seriesTitle1 + '\'' +
+                ", seriesTitle2='" + seriesTitle2 + '\'' +
                 '}';
     }
 }
