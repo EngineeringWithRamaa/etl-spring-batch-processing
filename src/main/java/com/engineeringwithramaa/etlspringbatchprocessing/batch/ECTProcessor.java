@@ -22,7 +22,7 @@ public class ECTProcessor implements ItemProcessor<ECT, ECT> {
     public ECT process(ECT ect) throws Exception {
         String transactionStatus = TRANSACTION_STATUS.get(ect.getTransactionStatus());
         ect.setTransactionStatus(transactionStatus);
-        System.out.println("status transformed " + ect.getTransactionStatus());
+        //System.out.println("status transformed " + ect.getTransactionStatus());
         return ect;
     }
 }

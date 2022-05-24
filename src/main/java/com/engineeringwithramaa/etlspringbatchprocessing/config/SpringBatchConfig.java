@@ -1,7 +1,11 @@
 package com.engineeringwithramaa.etlspringbatchprocessing.config;
 
+import com.engineeringwithramaa.etlspringbatchprocessing.batch.ECTReader;
+import com.engineeringwithramaa.etlspringbatchprocessing.batch.LibraryRecordReader;
+import com.engineeringwithramaa.etlspringbatchprocessing.batch.LibraryRecordWriter;
 import com.engineeringwithramaa.etlspringbatchprocessing.batch.UserCSVReader;
 import com.engineeringwithramaa.etlspringbatchprocessing.entity.ECT;
+import com.engineeringwithramaa.etlspringbatchprocessing.entity.LibraryRecord;
 import com.engineeringwithramaa.etlspringbatchprocessing.entity.User;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -19,10 +23,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableBatchProcessing
 public class SpringBatchConfig {
-
-    @Autowired
-    private UserCSVReader reader;
-
     @Bean
     public Job userTableTransformationJob(JobBuilderFactory jobBuilderFactory,
                                           StepBuilderFactory stepBuilderFactory,
@@ -31,20 +31,31 @@ public class SpringBatchConfig {
                                           ItemWriter<User> writer,
                                           ItemReader<ECT> ECTReader,
                                           ItemProcessor<ECT, ECT> ECTProcessor,
-                                          ItemWriter<ECT> ECTWriter) {
+                                          ItemWriter<ECT> ECTWriter,
+                                          ItemReader<LibraryRecord> lrReader,
+                                          ItemProcessor<LibraryRecord, LibraryRecord> lrProcessor,
+                                          ItemWriter<LibraryRecord> lrWriter
+                                          ) {
 
-        Step userStep = stepBuilderFactory.get("etl-user-step")
+        Step userStep = stepBuilderFactory.get("user-step")
                 .<User, User>chunk(100)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .build();
 
-        Step ECTStep = stepBuilderFactory.get("etl-electronic-card-transaction-step")
+        Step ECTStep = stepBuilderFactory.get("electronic-card-transaction-step")
                 .<ECT, ECT>chunk(200)
                 .reader(ECTReader)
                 .processor(ECTProcessor)
                 .writer(ECTWriter)
+                .build();
+
+        Step libraryRecordStep = stepBuilderFactory.get("library-record-step")
+                .<LibraryRecord, LibraryRecord>chunk(200)
+                .reader(lrReader)
+                .processor(lrProcessor)
+                .writer(lrWriter)
                 .build();
 
 
@@ -52,6 +63,7 @@ public class SpringBatchConfig {
                 .incrementer(new RunIdIncrementer())
                 .start(userStep)
                 .next(ECTStep)
+                .next(libraryRecordStep)
                 .build();
 
     }

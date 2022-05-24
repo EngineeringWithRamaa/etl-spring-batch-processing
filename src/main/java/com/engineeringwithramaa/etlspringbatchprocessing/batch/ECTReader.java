@@ -16,19 +16,19 @@ import java.io.IOException;
 @Component
 public class ECTReader {
     @Bean
-    public FlatFileItemReader<ECT> readerECT(@Value("${input2}") Resource resource) throws IOException {
+    public FlatFileItemReader<ECT> ectReader(@Value("${input2}") Resource resource) throws IOException {
         FlatFileItemReader<ECT> flatFileItemReader = new FlatFileItemReader<>();
         flatFileItemReader.setResource(resource);
         System.out.println("File Resource " + resource.getFile());
         flatFileItemReader.setName("ECT-csv-reader");
         flatFileItemReader.setLinesToSkip(1);
-        flatFileItemReader.setLineMapper(lineMapperECT());
+        flatFileItemReader.setLineMapper(ectLineMapper());
 
         return flatFileItemReader;
     }
 
     @Bean
-    public LineMapper<ECT> lineMapperECT() {
+    public LineMapper<ECT> ectLineMapper() {
         DefaultLineMapper<ECT> defaultLineMapper = new DefaultLineMapper<>();
 
         DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();

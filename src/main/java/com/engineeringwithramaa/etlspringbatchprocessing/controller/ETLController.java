@@ -7,6 +7,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,14 +18,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/start-batch")
+@RequestMapping("/etl")
 public class ETLController {
     @Autowired
     private JobLauncher jobLauncher;
     @Autowired
-    private Job job;
+    private Job job1;
 
-    @GetMapping
+    @GetMapping("/start-batch")
     public ResponseEntity<BatchStatusDTO> startTheJobLauncher()
             throws JobInstanceAlreadyCompleteException,
             JobExecutionAlreadyRunningException,
@@ -32,7 +33,7 @@ public class ETLController {
         Map<String, JobParameter> maps = new HashMap<>();
         maps.put("Time-Stamp", new JobParameter(System.currentTimeMillis()));
         JobParameters jobParameters = new JobParameters(maps);
-        JobExecution execution = jobLauncher.run(job, jobParameters);
+        JobExecution execution = jobLauncher.run(job1, jobParameters);
 
         Date endTime = execution.getEndTime();
         Date startTime = execution.getStartTime();
@@ -40,7 +41,7 @@ public class ETLController {
 
 
         BatchStatusDTO userJobStatus = new BatchStatusDTO(execution.getJobId(),
-                                    job.getName(),
+                                    job1.getName(),
                                     execution.getStartTime(),
                                     execution.getEndTime(),
                                     String.valueOf(durationTime)+"s",
@@ -48,4 +49,5 @@ public class ETLController {
 
         return ResponseEntity.ok(userJobStatus);
     }
+
 }
