@@ -10,14 +10,14 @@ public class StepListener implements StepExecutionListener {
     @Override
     public void beforeStep(StepExecution stepExecution) {
         System.out.println("Step Listener :: beforeStep() -> Step " +
-                            stepExecution.getStepName() + "started for " +
+                            stepExecution.getStepName() + " started for " +
                             stepExecution.getJobExecution().getJobInstance().getJobName());
     }
 
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
         System.out.println("Step Listener :: afterStep() -> Step " +
-                            stepExecution.getStepName() + "completed for " +
+                            stepExecution.getStepName() + " completed for " +
                             stepExecution.getJobExecution().getJobInstance().getJobName());
         return null;
     }

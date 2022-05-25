@@ -63,24 +63,25 @@ public class SpringBatchConfig {
     public Job userTableTransformationJob() {
 
         Step userStep = stepBuilderFactory.get("user-step")
+                .listener(new com.engineeringwithramaa.etlspringbatchprocessing.listener.StepListener())
                 .<User, User>chunk(100)
                 .reader(reader)
                 .listener(userReadListener)
                 .processor(processor)
                 .writer(writer)
                 .listener(userWriteListener)
-                .listener(stepListener)
                 .build();
 
         Step ECTStep = stepBuilderFactory.get("electronic-card-transaction-step")
+                .listener(new com.engineeringwithramaa.etlspringbatchprocessing.listener.StepListener())
                 .<ECT, ECT>chunk(200)
                 .reader(ECTReader)
                 .processor(ECTProcessor)
                 .writer(ECTWriter)
-                .listener(stepListener)
                 .build();
 
         Step libraryRecordStep = stepBuilderFactory.get("library-record-step")
+                .listener(new com.engineeringwithramaa.etlspringbatchprocessing.listener.StepListener())
                 .<LibraryRecord, LibraryRecord>chunk(200)
                 .reader(lrReader)
                 .processor(lrProcessor)
@@ -93,7 +94,7 @@ public class SpringBatchConfig {
                 .incrementer(new RunIdIncrementer())
                 .start(userStep)
                 .next(ECTStep)
-                //.next(libraryRecordStep)
+                .next(libraryRecordStep)
                 .build();
 
     }

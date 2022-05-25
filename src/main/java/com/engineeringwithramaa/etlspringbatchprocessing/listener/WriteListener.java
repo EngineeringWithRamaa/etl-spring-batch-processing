@@ -10,12 +10,12 @@ public class WriteListener<S> implements ItemWriteListener<S> {
 
     @Override
     public void beforeWrite(List<? extends S> items) {
-        System.out.println("WriteListener::beforeWrite() -> item " + items );
+      //  System.out.println("WriteListener::beforeWrite() -> item " + items );
     }
 
     @Override
     public void afterWrite(List<? extends S> items) {
-        System.out.println("WriteListener::afterWrite() -> item " + items);
+      //  System.out.println("WriteListener::afterWrite() -> item " + items);
     }
 
     @Override
