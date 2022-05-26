@@ -33,6 +33,7 @@ public class ETLController {
         Map<String, JobParameter> maps = new HashMap<>();
         maps.put("Time-Stamp", new JobParameter(System.currentTimeMillis()));
         JobParameters jobParameters = new JobParameters(maps);
+
         JobExecution execution = jobLauncher.run(job1, jobParameters);
 
         Date endTime = execution.getEndTime();
@@ -44,7 +45,7 @@ public class ETLController {
                                     job1.getName(),
                                     execution.getStartTime(),
                                     execution.getEndTime(),
-                                    String.valueOf(durationTime)+"s",
+                   String.valueOf(durationTime)+"s",
                                     execution.getStatus().toString());
 
         return ResponseEntity.ok(userJobStatus);

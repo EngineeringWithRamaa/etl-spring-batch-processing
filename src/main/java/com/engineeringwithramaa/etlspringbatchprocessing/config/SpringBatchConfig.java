@@ -1,9 +1,5 @@
 package com.engineeringwithramaa.etlspringbatchprocessing.config;
 
-import com.engineeringwithramaa.etlspringbatchprocessing.batch.ECTReader;
-import com.engineeringwithramaa.etlspringbatchprocessing.batch.LibraryRecordReader;
-import com.engineeringwithramaa.etlspringbatchprocessing.batch.LibraryRecordWriter;
-import com.engineeringwithramaa.etlspringbatchprocessing.batch.UserCSVReader;
 import com.engineeringwithramaa.etlspringbatchprocessing.entity.ECT;
 import com.engineeringwithramaa.etlspringbatchprocessing.entity.LibraryRecord;
 import com.engineeringwithramaa.etlspringbatchprocessing.entity.User;
@@ -55,14 +51,11 @@ public class SpringBatchConfig {
     @Autowired
     WriteListener<User> userWriteListener;
     @Autowired
-    StepListener stepListener;
-    @Autowired
     JobListener jobExecListener;
 
     @Bean
-    public Job userTableTransformationJob() {
-
-        Step userStep = stepBuilderFactory.get("user-step")
+    public Step userStep(){
+        return stepBuilderFactory.get("user-step")
                 .listener(new com.engineeringwithramaa.etlspringbatchprocessing.listener.StepListener())
                 .<User, User>chunk(100)
                 .reader(reader)
@@ -71,30 +64,39 @@ public class SpringBatchConfig {
                 .writer(writer)
                 .listener(userWriteListener)
                 .build();
+    }
 
-        Step ECTStep = stepBuilderFactory.get("electronic-card-transaction-step")
+    @Bean
+    public Step ECTStep() {
+        return stepBuilderFactory.get("electronic-card-transaction-step")
                 .listener(new com.engineeringwithramaa.etlspringbatchprocessing.listener.StepListener())
                 .<ECT, ECT>chunk(200)
                 .reader(ECTReader)
                 .processor(ECTProcessor)
                 .writer(ECTWriter)
                 .build();
+    }
 
-        Step libraryRecordStep = stepBuilderFactory.get("library-record-step")
+    @Bean
+    public Step libraryRecordStep() {
+        return stepBuilderFactory.get("library-record-step")
                 .listener(new com.engineeringwithramaa.etlspringbatchprocessing.listener.StepListener())
                 .<LibraryRecord, LibraryRecord>chunk(200)
                 .reader(lrReader)
                 .processor(lrProcessor)
                 .writer(lrWriter)
                 .build();
+    }
 
+    @Bean
+    public Job userTableTransformationJob() {
 
         return jobBuilderFactory.get("etl-batch-job")
                 .listener(jobExecListener)
                 .incrementer(new RunIdIncrementer())
-                .start(userStep)
-                .next(ECTStep)
-                .next(libraryRecordStep)
+                .start(userStep())
+                .next(ECTStep())
+                .next(libraryRecordStep())
                 .build();
 
     }
