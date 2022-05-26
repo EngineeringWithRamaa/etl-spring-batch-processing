@@ -8,10 +8,11 @@ import com.engineeringwithramaa.etlspringbatchprocessing.listener.ReadListener;
 import com.engineeringwithramaa.etlspringbatchprocessing.listener.WriteListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepListener;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.FlowBuilder;
+import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
@@ -19,6 +20,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 @Configuration
 @EnableBatchProcessing
@@ -89,14 +91,30 @@ public class SpringBatchConfig {
     }
 
     @Bean
-    public Job userTableTransformationJob() {
+	public Flow splitFlowParallelSteps() {
 
-        return jobBuilderFactory.get("etl-batch-job")
+		FlowBuilder<Flow> flowBuilder = new FlowBuilder<Flow>
+                                    ("Split Flow, parallel steps - User Step & Electronic Card Transaction");
+		flowBuilder.start(userStep()).next(ECTStep()).end();
+		return flowBuilder.build();
+	}
+
+    public Flow libraryRecordsFlow() {
+        return new FlowBuilder<Flow>("Library Records Flow ")
+                .start(libraryRecordStep())
+                .build();
+    }
+
+
+    @Bean
+    public Job userTableTransformationJob() {
+        return jobBuilderFactory.get("ETL Batch Processing - Job ")
                 .listener(jobExecListener)
                 .incrementer(new RunIdIncrementer())
-                .start(userStep())
-                .next(ECTStep())
-                .next(libraryRecordStep())
+                .start(libraryRecordsFlow())
+                .split(new SimpleAsyncTaskExecutor("Parallel Steps - Simple Async Task Executor"))
+                .add(splitFlowParallelSteps())
+                .end()
                 .build();
 
     }
