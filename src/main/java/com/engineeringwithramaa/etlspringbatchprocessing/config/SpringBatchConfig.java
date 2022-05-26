@@ -91,20 +91,28 @@ public class SpringBatchConfig {
     }
 
     @Bean
-	public Flow splitFlowParallelSteps() {
+	public Flow userAndECTSteps() {
 
 		FlowBuilder<Flow> flowBuilder = new FlowBuilder<Flow>
-                                    ("Split Flow, parallel steps - User Step & Electronic Card Transaction");
+                                    ("Flow 2 - User Step & Electronic Card Transaction");
 		flowBuilder.start(userStep()).next(ECTStep()).end();
 		return flowBuilder.build();
 	}
 
+    @Bean
     public Flow libraryRecordsFlow() {
-        return new FlowBuilder<Flow>("Library Records Flow ")
+        return new FlowBuilder<Flow>("Flow 1 - Library Records  ")
                 .start(libraryRecordStep())
                 .build();
     }
 
+    @Bean
+    public Flow splitFlow(){
+        return new FlowBuilder<Flow>("Split Flow")
+                .split(new SimpleAsyncTaskExecutor())
+                .add(libraryRecordsFlow(), userAndECTSteps())
+                .build();
+    }
 
     @Bean
     public Job userTableTransformationJob() {
@@ -113,7 +121,7 @@ public class SpringBatchConfig {
                 .incrementer(new RunIdIncrementer())
                 .start(libraryRecordsFlow())
                 .split(new SimpleAsyncTaskExecutor("Parallel Steps - Simple Async Task Executor"))
-                .add(splitFlowParallelSteps())
+                .add(splitFlow())
                 .end()
                 .build();
 
