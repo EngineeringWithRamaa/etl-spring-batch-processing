@@ -1,10 +1,12 @@
 package com.engineeringwithramaa.etlspringbatchprocessing.config;
 
+import com.engineeringwithramaa.etlspringbatchprocessing.entity.Customer;
 import com.engineeringwithramaa.etlspringbatchprocessing.entity.ECT;
 import com.engineeringwithramaa.etlspringbatchprocessing.entity.LibraryRecord;
 import com.engineeringwithramaa.etlspringbatchprocessing.entity.User;
 import com.engineeringwithramaa.etlspringbatchprocessing.listener.JobListener;
 import com.engineeringwithramaa.etlspringbatchprocessing.listener.ReadListener;
+import com.engineeringwithramaa.etlspringbatchprocessing.listener.StepListener;
 import com.engineeringwithramaa.etlspringbatchprocessing.listener.WriteListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -21,9 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
 @EnableBatchProcessing
+@EnableScheduling
 public class SpringBatchConfig {
 
     @Autowired
@@ -49,6 +53,10 @@ public class SpringBatchConfig {
     @Autowired
     ItemWriter<LibraryRecord> lrWriter;
     @Autowired
+    ItemReader<Customer> ctReader;
+    @Autowired
+    ItemWriter<Customer> ctWriter;
+    @Autowired
     ReadListener<User> userReadListener;
     @Autowired
     WriteListener<User> userWriteListener;
@@ -58,7 +66,7 @@ public class SpringBatchConfig {
     @Bean
     public Step userStep(){
         return stepBuilderFactory.get("user-step")
-                .listener(new com.engineeringwithramaa.etlspringbatchprocessing.listener.StepListener())
+                .listener(new StepListener())
                 .<User, User>chunk(100)
                 .reader(reader)
                 .listener(userReadListener)
@@ -69,9 +77,19 @@ public class SpringBatchConfig {
     }
 
     @Bean
+    public Step customerStep() {
+        return stepBuilderFactory.get("customer-step")
+                .listener(new StepListener())
+                .<Customer, Customer>chunk(100)
+                .reader(ctReader)
+                .writer(ctWriter)
+                .build();
+    }
+
+    @Bean
     public Step ECTStep() {
         return stepBuilderFactory.get("electronic-card-transaction-step")
-                .listener(new com.engineeringwithramaa.etlspringbatchprocessing.listener.StepListener())
+                .listener(new StepListener())
                 .<ECT, ECT>chunk(200)
                 .reader(ECTReader)
                 .processor(ECTProcessor)
@@ -82,7 +100,7 @@ public class SpringBatchConfig {
     @Bean
     public Step libraryRecordStep() {
         return stepBuilderFactory.get("library-record-step")
-                .listener(new com.engineeringwithramaa.etlspringbatchprocessing.listener.StepListener())
+                .listener(new StepListener())
                 .<LibraryRecord, LibraryRecord>chunk(200)
                 .reader(lrReader)
                 .processor(lrProcessor)
@@ -91,7 +109,7 @@ public class SpringBatchConfig {
     }
 
     @Bean
-	public Flow userAndECTSteps() {
+	public Flow userAndECTFlow() {
 
 		FlowBuilder<Flow> flowBuilder = new FlowBuilder<Flow>
                                     ("Flow 2 - User Step & Electronic Card Transaction");
@@ -101,8 +119,15 @@ public class SpringBatchConfig {
 
     @Bean
     public Flow libraryRecordsFlow() {
-        return new FlowBuilder<Flow>("Flow 1 - Library Records  ")
+        return new FlowBuilder<Flow>("Flow 2 - Library Records  ")
                 .start(libraryRecordStep())
+                .build();
+    }
+
+    @Bean
+    public Flow customerFlow() {
+        return new FlowBuilder<Flow>("Flow 1 - Customer Records")
+                .start(customerStep())
                 .build();
     }
 
@@ -110,7 +135,7 @@ public class SpringBatchConfig {
     public Flow splitFlow(){
         return new FlowBuilder<Flow>("Split Flow")
                 .split(new SimpleAsyncTaskExecutor())
-                .add(libraryRecordsFlow(), userAndECTSteps())
+                .add(libraryRecordsFlow(), userAndECTFlow())
                 .build();
     }
 
@@ -119,7 +144,7 @@ public class SpringBatchConfig {
         return jobBuilderFactory.get("ETL Batch Processing - Job ")
                 .listener(jobExecListener)
                 .incrementer(new RunIdIncrementer())
-                .start(libraryRecordsFlow())
+                .start(customerFlow())
                 .split(new SimpleAsyncTaskExecutor("Parallel Steps - Simple Async Task Executor"))
                 .add(splitFlow())
                 .end()

@@ -9,10 +9,13 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +26,19 @@ public class ETLController {
     @Autowired
     private JobLauncher jobLauncher;
     @Autowired
-    private Job job1;
+    private Job job;
 
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+
+    @Scheduled(cron = "0 45 16 28 * *")
+    public void scheduleByFixedRate() throws Exception {
+        System.out.println("***** BATCH PROCESSING STARTS *****");
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("time", format.format(Calendar.getInstance().getTime())).toJobParameters();
+        jobLauncher.run(job, jobParameters);
+        System.out.println("***** EXECUTION OVER ******\n");
+    }
+    /*
     @GetMapping("/start-batch")
     public ResponseEntity<BatchStatusDTO> startTheJobLauncher()
             throws JobInstanceAlreadyCompleteException,
@@ -50,5 +64,7 @@ public class ETLController {
 
         return ResponseEntity.ok(userJobStatus);
     }
+
+    */
 
 }

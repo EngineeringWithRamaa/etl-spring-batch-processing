@@ -17,3 +17,4 @@ spring:
 input1: file:/I:/2022/IntelliJ Workspace/etl-spring-batch-processing/src/main/resources/users.csv
 input2: file:/I:/2022/IntelliJ Workspace/etl-spring-batch-processing/src/main/resources/electronic-card-transactions-table.csv
 input3: file:/I:/2022/IntelliJ Workspace/etl-spring-batch-processing/src/main/resources/BritishLibrary-records1.csv
+input4: file:/I:/2022/IntelliJ Workspace/etl-spring-batch-processing/src/main/resources/customers.csv
